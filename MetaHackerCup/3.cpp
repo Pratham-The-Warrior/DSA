@@ -17,91 +17,70 @@ int main()
         for (int i = 0; i < N; ++i)
             cin >> A[i];
 
-        // Partition into blocks where each block of length k contains exactly numbers 1..k
-        vector<int> starts;  // start indices (0-based) of each block
-        vector<int> lengths; // lengths k_j
-        vector<int> pos1;    // position of 1 inside the block (1-based)
-        vector<char> seen(N + 1, 0);
-        vector<int> seen_list;
-        int cur_max = 0, uniq = 0;
-        int block_start = 0;
+        vector<int> cnt(N + 2, 0);
+        for (int v : A)
+            ++cnt[v];
+        vector<int> g(N + 2, 0);
+        for (int v = 1; v <= N; ++v)
+            g[v] = cnt[v] - cnt[v + 1];
+
+        vector<int> ks, pos;
+        vector<int> seen(N + 2, 0);
+        int stamp = 1, start = 0, curmax = 0, uniq = 0, p1 = -1;
         for (int i = 0; i < N; ++i)
         {
             int v = A[i];
-            if (!seen[v])
+            if (seen[v] != stamp)
             {
-                seen[v] = 1;
-                seen_list.push_back(v);
+                seen[v] = stamp;
                 ++uniq;
             }
-            if (v > cur_max)
-                cur_max = v;
-            if (uniq == cur_max)
+            curmax = max(curmax, v);
+            if (v == 1)
+                p1 = i - start + 1;
+            int len = i - start + 1;
+            if (curmax == len && uniq == curmax && curmax > 0 && g[curmax] > 0)
             {
-                int k = cur_max;
-                starts.push_back(block_start);
-                lengths.push_back(k);
-                // find position of 1 in this block
-                int p = -1;
-                for (int j = block_start; j <= i; ++j)
-                    if (A[j] == 1)
-                    {
-                        p = j - block_start + 1;
-                        break;
-                    }
-                pos1.push_back(p);
-                // reset seen
-                for (int x : seen_list)
-                    seen[x] = 0;
-                seen_list.clear();
-                // reset for next block
-                cur_max = 0;
-                uniq = 0;
-                block_start = i + 1;
+                ks.push_back(curmax);
+                pos.push_back(p1);
+                --g[curmax];
+                ++stamp;
+                start = i + 1;
+                curmax = uniq = 0;
+                p1 = -1;
             }
         }
 
-        int m = (int)lengths.size();
-        // compute s_j = required left rotations for block j
-        vector<int> s(m);
+        int m = ks.size();
+        vector<ll> x(m, 0);
+        vector<int> s(m, 0);
         for (int j = 0; j < m; ++j)
         {
-            int k = lengths[j];
-            int p = pos1[j]; // 1-based pos of value 1 in block
-            // s = (k - p + 1) % k
-            int sj = (k - p + 1) % k;
-            s[j] = sj;
+            int k = ks[j], p = pos[j];
+            s[j] = (k - p + 1) % k;
         }
-
-        // compute x_j from last to first
-        vector<int> x(m, 0);
-        long long cumulative = 0; // sum of x_{t} for t>j when at j
-        for (int j = m - 1; j >= 0; --j)
+        if (m)
         {
-            int k = lengths[j];
-            // x_j ≡ s_j - cumulative  (mod k), pick representative in [0,k-1]
-            long long need = s[j] - (cumulative % k);
-            int xj = (int)((need % k + k) % k);
-            x[j] = xj;
-            cumulative += xj;
+            x[m - 1] = s[m - 1];
+            for (int j = m - 2; j >= 0; --j)
+            {
+                int k = ks[j];
+                ll rem = x[j + 1] % k;
+                int delta = (int)((s[j] - rem) % k);
+                if (delta < 0)
+                    delta += k;
+                x[j] = x[j + 1] + delta;
+            }
         }
 
-        // Build operations
-        vector<pair<int, int>> ops; // (type, arg) type 1 with arg=k, type 2 with arg=0
+        ll totalOps = m + (m ? x[0] : 0);
+        cout << "Case #" << tc << ": " << totalOps << "\n";
         for (int j = 0; j < m; ++j)
         {
-            ops.emplace_back(1, lengths[j]);
-            for (int t = 0; t < x[j]; ++t)
-                ops.emplace_back(2, 0);
-        }
-
-        // Output
-        cout << "Case #" << tc << ": " << ops.size() << "\n";
-        for (auto &op : ops)
-        {
-            if (op.first == 1)
-                cout << "1 " << op.second << "\n";
-            else
+            cout << "1 " << ks[j] << "\n";
+            ll after = (j + 1 < m ? x[j + 1] : 0);
+            ll times = x[j] - after;
+            for (ll t = 0; t < times; ++t)
                 cout << "2\n";
         }
     }
