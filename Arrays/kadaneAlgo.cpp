@@ -22,7 +22,20 @@ int main()
     {
       cin >> a[i];
     }
-    
+
+    // Kadane's Algorithm
+    long long max_so_far = LLONG_MIN;
+    long long current_sum = 0;
+
+    for (int i = 0; i < n; i++)
+    {
+      current_sum += a[i];
+      max_so_far = max(max_so_far, current_sum);
+      if (current_sum < 0)
+        current_sum = 0;
+    }
+
+    cout << max_so_far << "\n";
   }
 
   return 0;
