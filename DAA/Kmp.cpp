@@ -1,0 +1,84 @@
+/* ************************************************
+ *                                                *
+ *       P     R     A     T     H     A     M    *
+ *                                                *
+ ************************************************ */
+#include <bits/stdc++.h>
+using namespace std;
+
+// Function to compute the LPS (Longest Prefix Suffix) array
+void computeLPSArray(const string &pattern, vector<int> &lps)
+{
+    int length = 0; // length of the previous longest prefix suffix
+    int i = 1;
+    lps[0] = 0; // LPS of first character is always 0
+
+    while (i < pattern.length())
+    {
+        if (pattern[i] == pattern[length])
+        {
+            length++;
+            lps[i] = length;
+            i++;
+        }
+        else
+        {
+            if (length != 0)
+            {
+                // Consider the previous longest prefix suffix
+                length = lps[length - 1];
+            }
+            else
+            {
+                lps[i] = 0;
+                i++;
+            }
+        }
+    }
+}
+
+// KMP Search function
+void KMPSearch(const string &pattern, const string &text)
+{
+    int m = pattern.length();
+    int n = text.length();
+
+    vector<int> lps(m);
+    computeLPSArray(pattern, lps);
+
+    int i = 0; // index for text[]
+    int j = 0; // index for pattern[]
+
+    while (i < n)
+    {
+        if (pattern[j] == text[i])
+        {
+            i++;
+            j++;
+        }
+
+        if (j == m)
+        {
+            cout << "Pattern found at index " << (i - j) << endl;
+            j = lps[j - 1]; // Continue to find next match
+        }
+        else if (i < n && pattern[j] != text[i])
+        {
+            if (j != 0)
+                j = lps[j - 1];
+            else
+                i++;
+        }
+    }
+}
+
+// Example usage
+int main()
+{
+    string text = "ABABDABACDABABCABAB";
+    string pattern = "ABABCABAB";
+
+    KMPSearch(pattern, text);
+
+    return 0;
+}
