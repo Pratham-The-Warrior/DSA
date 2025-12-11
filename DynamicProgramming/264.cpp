@@ -8,14 +8,18 @@ using namespace std;
 
 int main()
 {
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
-  int t;
-  cin >> t;
-  while (t--)
-  {
-  }
+    int g, c, l;
+    cin >> g >> c >> l;
 
-  return 0;
+    int maxi = max({g, c, l});
+    int mini = min({g, c, l});
+
+    if (maxi - mini >= 10)
+        cout << "check again" << endl;
+    else
+        cout << "final" << " " << g + c + l - mini - maxi << endl;
+    return 0;
 }

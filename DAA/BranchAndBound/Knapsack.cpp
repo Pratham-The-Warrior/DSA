@@ -38,7 +38,8 @@ int knapsack(int n, int W, vector<int> &value, vector<int> &weight)
 
     while (!q.empty())
     {
-        auto [i, profit, w] = q.front();
+        int i, profit, w;
+        tie(i, profit, w) = q.front();
         q.pop();
 
         if (i == n)
