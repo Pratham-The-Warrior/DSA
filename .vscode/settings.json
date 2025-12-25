@@ -1,5 +1,8 @@
 {
   "files.associations": {
     "iostream": "cpp"
-  }
+  },
+  "C_Cpp.errorSquiggles": "enabled",
+  "C_Cpp.windowsErrorReportingMode": "enabled",
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true
 }
