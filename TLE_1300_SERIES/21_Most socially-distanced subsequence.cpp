@@ -15,16 +15,30 @@ int main()
     cin >> t;
     while (t--)
     {
-        long long n;
+        int n;
         cin >> n;
-        vector<long long> a(n);
+        vector<int> p(n);
         for (int i = 0; i < n; i++)
-        {
-            cin >> a[i];
-        }
-        sort(a.begin(), a.end());
+            cin >> p[i];
 
-        cout << max(a[0], a[1] - a[0]) << endl;
+        vector<int> s;
+        s.push_back(p[0]);
+
+        for (int i = 1; i < n - 1; i++)
+        {
+            if ((p[i] > p[i - 1] && p[i] > p[i + 1]) ||
+                (p[i] < p[i - 1] && p[i] < p[i + 1]))
+            {
+                s.push_back(p[i]);
+            }
+        }
+
+        s.push_back(p[n - 1]);
+
+        cout << s.size() << "\n";
+        for (int x : s)
+            cout << x << " ";
+        cout << "\n";
     }
 
     return 0;
