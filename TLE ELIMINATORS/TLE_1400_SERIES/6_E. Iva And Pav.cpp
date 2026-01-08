@@ -53,7 +53,7 @@ int main()
         {
             long long l, k;
             cin >> l >> k;
-            l--; // convert to 0-based
+            l--; 
 
             if (a[l] < k)
             { // impossible immediately
@@ -75,7 +75,7 @@ int main()
                     hi = mid - 1;
                 }
             }
-            cout << ans + 1 << " "; // back to 1-based
+            cout << ans + 1 << " "; 
         }
         cout << "\n";
     }

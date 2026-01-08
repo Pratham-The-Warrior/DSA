@@ -34,7 +34,7 @@ int main()
             long long a = p[i].first;
             long long b = p[i].second;
 
-            if (b >= L && a <= R) // intersects current reachable range
+            if (b >= L && a <= R) 
             {
                 found = true;
                 L = min(L, a);

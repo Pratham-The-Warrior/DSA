@@ -21,7 +21,7 @@ int main()
             }
             v.push_back({m, k});
         }
-        // sort(v.begin(), v.end());
+        sort(v.begin(), v.end());
         int p = 0, l = 0;
         for (auto i : v)
         {
