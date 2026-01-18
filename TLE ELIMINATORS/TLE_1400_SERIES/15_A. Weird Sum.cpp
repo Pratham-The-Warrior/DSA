@@ -1,35 +1,61 @@
 #include <bits/stdc++.h>
 using namespace std;
+typedef long long ll;
 
 int main()
 {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int t;
-    cin >> t;
-    while (t--)
-    {
-        vector<vector<char>> v(8, vector<char>(8));
-        for (int i = 0; i < 8; i++)
-            for (int j = 0; j < 8; j++)
-                cin >> v[i][j];
+    int n, m;
+    cin >> n >> m;
 
-        for (int i = 1; i < 7; i++)
+    unordered_map<int, vector<pair<int, int>>> pos;
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
         {
-            for (int j = 1; j < 7; j++)
-            {
-                if (v[i][j] == '#' &&
-                    v[i - 1][j - 1] == '#' &&
-                    v[i - 1][j + 1] == '#' &&
-                    v[i + 1][j - 1] == '#' &&
-                    v[i + 1][j + 1] == '#')
-                {
-                    cout << i + 1 << " " << j + 1 << '\n';
-                }
-            }
+            int x;
+            cin >> x;
+            pos[x].push_back({i, j});
         }
     }
 
+    ll ans = 0;
+
+    for (auto &entry : pos)
+    {
+        auto &v = entry.second;
+        int k = v.size();
+        if (k <= 1)
+            continue;
+
+        vector<ll> rows(k), cols(k);
+        for (int i = 0; i < k; i++)
+        {
+            rows[i] = v[i].first;
+            cols[i] = v[i].second;
+        }
+
+        sort(rows.begin(), rows.end());
+        sort(cols.begin(), cols.end());
+
+        ll prefix = 0;
+        for (int i = 0; i < k; i++)
+        {
+            ans += rows[i] * i - prefix;
+            prefix += rows[i];
+        }
+
+        prefix = 0;
+        for (int i = 0; i < k; i++)
+        {
+            ans += cols[i] * i - prefix;
+            prefix += cols[i];
+        }
+    }
+
+    cout << ans << '\n';
     return 0;
 }
