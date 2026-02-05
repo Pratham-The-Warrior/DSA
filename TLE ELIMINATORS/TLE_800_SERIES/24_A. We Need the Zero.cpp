@@ -25,7 +25,7 @@ int main()
         }
 
         int ans = -1;
-        for (int i = 0; i <= 1023; i++) // skip i = 0
+        for (int i = 0; i <= 1023; i++)
         {
             int temp = 0;
             for (int j = 0; j < n; j++)
