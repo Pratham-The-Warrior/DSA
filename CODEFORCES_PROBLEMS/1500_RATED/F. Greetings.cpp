@@ -1,39 +1,71 @@
-/* ************************************************
- *                                                *
- *       P     R     A     T     H     A     M    *
- *                                                *
- ************************************************ */
 #include <bits/stdc++.h>
 using namespace std;
-typedef long long ll;
+
+const int MAXN = 200005;
+
+int fenwick[MAXN];
+
+void update(int i)
+{
+    for (; i < MAXN; i += i & -i)
+        fenwick[i]++;
+}
+
+int query(int i)
+{
+    int sum = 0;
+    for (; i > 0; i -= i & -i)
+        sum += fenwick[i];
+    return sum;
+}
 
 int main()
 {
     ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    /*
-    As all have same speed relatively all are at rest with each other
-    so greeting can happen only if one of them stops
-    condition is a[i]<b[i]<b[j]<a[j]
-    in this conditon greeting can happen
+    cin.tie(NULL);
 
-    */
     int t;
     cin >> t;
+
     while (t--)
     {
         int n;
         cin >> n;
 
-        vector<pair<long long, long long>> v(n);
+        vector<pair<int, int>> arr(n);
+        vector<int> vals;
 
-        for (int i = 0; i < n; i++)
+        for (auto &p : arr)
         {
-            cin >> v[i].first >> v[i].second;
+            cin >> p.second >> p.first;
+            vals.push_back(p.second);
         }
 
-        /*BRUTE FORCE*/
-    }
+        // coordinate compression
+        sort(vals.begin(), vals.end());
+        vals.erase(unique(vals.begin(), vals.end()), vals.end());
 
-    return 0;
+        for (auto &p : arr)
+        {
+            p.second = lower_bound(vals.begin(), vals.end(), p.second) - vals.begin() + 1;
+        }
+
+        sort(arr.begin(), arr.end());
+
+        memset(fenwick, 0, sizeof(fenwick));
+
+        long long ans = 0;
+
+        for (auto p : arr)
+        {
+            int x = p.second;
+
+            // elements greater than x = total - <= x
+            ans += query(MAXN - 1) - query(x);
+
+            update(x);
+        }
+
+        cout << ans << "\n";
+    }
 }
