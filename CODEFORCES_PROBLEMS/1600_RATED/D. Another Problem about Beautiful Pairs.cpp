@@ -1,62 +1,74 @@
-/* ************************************************
- *                                                *
- *       P     R     A     T     H     A     M    *
- *                                                *
- ************************************************ */
+/**************************************************
+ * *
+ * P  R  A  T  H  A  M                     *
+ * *
+ **************************************************/
 
 #include <bits/stdc++.h>
 using namespace std;
+
 typedef long long ll;
+
+/**
+ * LOGIC: Square Root Decomposition Insight
+ * ----------------------------------------
+ * Problem: Find pairs (i, j) such that a[i] * a[j] = j - i.
+ * Constraint: 0 <= i < j < n.
+ * * Observation:
+ * Since j - i < n, then a[i] * a[j] must be < n.
+ * If the product of two positive integers is < n, at least one
+ * of them must be <= sqrt(n).
+ * * Complexity: O(T * N * sqrt(N))
+ */
 
 void solve()
 {
     int n;
-    cin >> n;
-    vector<int> a(n);
-    vector<vector<int>> pos(2 * n + 1);
-    vector<int> existing_values;
+    if (!(cin >> n))
+        return;
 
+    vector<ll> a(n);
     for (int i = 0; i < n; i++)
     {
         cin >> a[i];
-        if (a[i] <= n)
-        { // Values > n can never satisfy a[i]*a[j] < n
-            if (pos[a[i]].empty())
-                existing_values.push_back(a[i]);
-            pos[a[i]].push_back(i);
-        }
     }
 
     ll ans = 0;
-    // Sort existing values to allow breaking the inner loop early
-    sort(existing_values.begin(), existing_values.end());
+    int B = sqrt(n);
 
-    for (int v1 : existing_values)
+    // Case 1: a[i] is the "small" value (a[i] <= B)
+    // We check all indices j and derive what index i must be.
+    for (int v = 1; v <= B; v++)
     {
-        for (int v2 : existing_values)
+        for (int j = 0; j < n; j++)
         {
-            ll dist = (ll)v1 * v2;
-            if (dist >= n)
-                break; // v2 is too large, and so will be subsequent ones
+            // From a[i] * a[j] = j - i, if a[i] = v:
+            // i = j - v * a[j]
+            ll i = (ll)j - (ll)v * a[j];
 
-            // We need to count pairs (i, j) where a[i]=v1, a[j]=v2, and j-i=dist
-            // Optimization: Iterate over the shorter position list
-            if (pos[v1].size() < pos[v2].size())
+            if (i >= 0 && i < j && a[i] == v)
             {
-                for (int i : pos[v1])
-                {
-                    int j = i + (int)dist;
-                    if (j < n && a[j] == v2)
-                        ans++;
-                }
+                ans++;
             }
-            else
+        }
+    }
+
+    // Case 2: a[j] is the "small" value (a[j] <= B)
+    // We only consider a[i] > B here to prevent double-counting pairs
+    // where both values are <= B (already handled in Case 1).
+    for (int v = 1; v <= B; v++)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            if (a[i] > B)
             {
-                for (int j : pos[v2])
+                // From a[i] * a[j] = j - i, if a[j] = v:
+                // j = i + a[i] * v
+                ll j = (ll)i + (ll)a[i] * v;
+
+                if (j < n && a[j] == v)
                 {
-                    int i = j - (int)dist;
-                    if (i >= 0 && a[i] == v1)
-                        ans++;
+                    ans++;
                 }
             }
         }
@@ -67,84 +79,15 @@ void solve()
 
 int main()
 {
+    // Fast I/O
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    /* ====================================
-
-    a[i].a[j] == j-i
-
-    (j-i) = {1,2,..n-1}
-
-    a[i]={1,2,4}
-
- c
-
-
-    a[i]  = {1,2}
-
-
-    obs:-
-        j-i will always be less than n so any value of a[i]>=n is useless we can ignore those indices
-        i am getting a feeling that real optimization can be hidden in     (j-i) = {1,2,..n-1}
-
-
-     ====================================*/
-
     int t;
     cin >> t;
+
     while (t--)
     {
-
-        // BRUTE
-        // ll n;
-        // cin >> n;
-        // vector<ll> a(n);
-        // for (int i = 0; i < n; i++)
-        // {
-        //     cin >> a[i];
-        // }
-
-        // ll ans = 0;
-
-        // for (int i = 0; i < n; i++)
-        // {
-        //     for (int j = 0; j < n; j++)
-        //     {
-        //         if (a[i] * a[j] == j - i)
-        //         {
-        //             ans++;
-        //         }
-        //     }
-        // }
-
-        // //we have to optimize this
-        // //nlogn is acceptable
-        // cout << ans << endl;
-
-        // OPTIMIZED
-
-        // ll ans = 0;
-        // for (int i = 0; i < n; i++)
-
-        // {
-
-        //     if (a[i] > n)
-        //         continue;
-        //     // j - i must be a multiple of a[i]
-        //     // So j = i + a[i], i + 2*a[i], i + 3*a[i], ...
-        //     for (ll j = (ll)i + a[i]; j < n; j += a[i])
-        //     {
-        //         if (a[i] * a[j] == (ll)j - i)
-        //         {
-        //             ans++;
-        //         }
-        //     }
-        // }
-
-        // cout << ans << endl;
-
-        // OPTIMIZED
         solve();
     }
 

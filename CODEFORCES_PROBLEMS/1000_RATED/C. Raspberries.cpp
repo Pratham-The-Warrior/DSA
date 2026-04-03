@@ -3,103 +3,84 @@ using namespace std;
 
 int main()
 {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
     int t;
     cin >> t;
     while (t--)
     {
         int n, k;
         cin >> n >> k;
-        vector<int> a(n);
-        for (int &x : a)
-            cin >> x;
 
+        vector<int> a(n), b(n);
+        for (int i = 0; i < n; i++)
+            cin >> a[i];
+
+        b = a;
+
+        int ct2 = 0;
+        bool ok = false;
+
+        for (int i = 0; i < n; i++)
+        {
+            while (b[i] % 2 == 0)
+            {
+                ct2++;
+                b[i] /= 2;
+            }
+            if (ct2 >= 2)
+            {
+                ok = true;
+                break;
+            }
+        }
+
+        // case k==4
+        if (k == 4)
+        {
+
+            int mod = 1e9;
+            for (int i = 0; i < n; i++)
+            {
+                mod = min(mod, (4 - (a[i] % 4)) % 4);
+            }
+
+            if (ok)
+                cout << 0 << endl;
+            else if (ct2 == 1)
+                cout << 1 << endl;
+            else
+                cout << min(2, mod) << endl;
+            continue;
+        }
+
+        // Case k == 2
         if (k == 2)
         {
-            bool ok = false;
-            for (int x : a)
-            {
-                if (x % 2 == 0)
-                {
-                    ok = true;
-                    break;
-                }
-            }
-            cout << (ok ? 0 : 1) << '\n';
-        }
-
-        else if (k == 3)
-        {
-            int ans = INT_MAX;
-            for (int x : a)
-            {
-                if (x % 3 == 0)
-                {
-                    ans = 0;
-                    break;
-                }
-                else if (x % 3 == 2)
-                {
-                    ans = min(ans, 1);
-                }
-                else
-                {
-                    ans = min(ans, 2);
-                }
-            }
-            cout << ans << '\n';
-        }
-
-        else if (k == 4)
-        {
-            int cnt2 = 0;
-            for (int x : a)
-            {
-                if (x % 4 == 0)
-                    cnt2 += 2;
-                else if (x % 2 == 0)
-                    cnt2 += 1;
-            }
-
-            if (cnt2 >= 2)
-            {
-                cout << 0 << '\n';
-            }
+            if (ct2 >= 1)
+                cout << 0 << endl;
             else
-            {
-                int best = INT_MAX;
-
-                // Option 1: make one number divisible by 4
-                for (int x : a)
-                {
-                    int need = (4 - x % 4) % 4;
-                    best = min(best, need);
-                }
-
-                // Option 2: make two numbers even
-                int odd = 0;
-                for (int x : a)
-                {
-                    if (x % 2)
-                        odd++;
-                }
-                best = min(best, odd);
-
-                cout << best << '\n';
-            }
+                cout << 1 << endl;
+            continue;
         }
 
-        else if (k == 5)
+        // Case k == 3
+        if (k == 3)
         {
-            int ans = INT_MAX;
-            for (int x : a)
+            int mod = 1e9;
+            for (int i = 0; i < n; i++)
             {
-                ans = min(ans, (5 - x % 5) % 5);
+                mod = min(mod, (3 - (a[i] % 3)) % 3);
             }
-            cout << ans << '\n';
+            cout << mod << endl;
+            continue;
         }
+
+        // Case k == 5
+        int mod = 1e9;
+        for (int i = 0; i < n; i++)
+        {
+            mod = min(mod, (5 - (a[i] % 5)) % 5);
+        }
+        cout << mod << endl;
     }
 
     return 0;
