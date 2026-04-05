@@ -44,6 +44,12 @@ int knapsack(int W, vector<int> &wt, vector<int> &val, int n)
     return dp[W];
 }
 
+/*-------------------------------------------------------------------------------------*/
+
+/*subset sum
+//*check if the given sum exist in a array or not
+*/
+
 int main()
 {
     ios::sync_with_stdio(false);
